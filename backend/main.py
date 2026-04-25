@@ -11,6 +11,7 @@ from .api.routes import analyze_router, health_router, models_router, optimize_r
 from .config import get_settings
 from .models.config import AppConfig
 from .services.cost_estimator import CostEstimator
+from .services.llm_adapters.base import LLMAdapter
 from .services.llm_adapters.mock_adapter import MockAdapter
 from .services.llm_adapters.ollama_adapter import OllamaAdapter
 from .services.optimization_engine import OptimizationEngine
@@ -29,6 +30,7 @@ async def lifespan(app: FastAPI):
     logger.info("tokenforge_starting", version=settings.version, adapter=settings.llm_adapter)
 
     # --- Build LLM adapter ---
+    llm_adapter: LLMAdapter
     if settings.llm_adapter == "ollama":
         llm_adapter = OllamaAdapter(
             base_url=settings.ollama_base_url,

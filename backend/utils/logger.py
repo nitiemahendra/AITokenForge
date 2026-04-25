@@ -23,13 +23,14 @@ def setup_logging(log_level: str = "INFO", json_logs: bool = False) -> None:
         structlog.processors.StackInfoRenderer(),
     ]
 
+    renderer: Any
     if json_logs:
         renderer = structlog.processors.JSONRenderer()
     else:
         renderer = structlog.dev.ConsoleRenderer(colors=True)
 
     structlog.configure(
-        processors=shared_processors + [
+        processors=shared_processors + [  # type: ignore[arg-type]
             structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),
@@ -38,7 +39,7 @@ def setup_logging(log_level: str = "INFO", json_logs: bool = False) -> None:
     )
 
     formatter = structlog.stdlib.ProcessorFormatter(
-        foreign_pre_chain=shared_processors,
+        foreign_pre_chain=shared_processors,  # type: ignore[arg-type]
         processors=[
             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
             renderer,

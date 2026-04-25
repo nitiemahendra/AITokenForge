@@ -1,4 +1,6 @@
 
+from typing import Any
+
 import numpy as np
 
 from ..models.responses import SemanticResult
@@ -25,7 +27,7 @@ class SemanticEngine:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2", device: str = "cpu"):
         self._model_name = model_name
         self._device = device
-        self._model = None
+        self._model: Any = None
         self._available = False
         self._init_model()
 
