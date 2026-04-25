@@ -3,7 +3,7 @@
 ## Supported Versions
 
 | Version | Supported |
-|---|---|
+|---------|-----------|
 | 1.x (latest) | ✅ Active security fixes |
 | < 1.0 | ❌ No longer supported |
 
@@ -13,117 +13,144 @@
 
 **Please do NOT open a public GitHub issue for security vulnerabilities.**
 
-Report privately:
+Report privately via one of:
 
-1. **Email:** nitiemahendra@gmail.com with subject `[SECURITY] TokenForge vulnerability`
-2. **GitHub:** Use [GitHub's private vulnerability reporting](https://github.com/nitiemahendra/tokenforge/security/advisories/new)
+1. **Email:** nitiemahendra@gmail.com — subject: `[SECURITY] TokenForge vulnerability`
+2. **GitHub advisory:** [Open a private advisory](https://github.com/nitiemahendra/aitokenforge/security/advisories/new)
 
-**Include in your report:**
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
+**Include:** description, reproduction steps, potential impact, suggested fix.
 
-**Response timeline:**
-- Acknowledgement within **48 hours**
-- Initial assessment within **7 days**
-- Fix timeline communicated within **14 days**
-
-You will be credited in the security advisory and CHANGELOG unless you prefer to remain anonymous.
+Response timeline: acknowledgement ≤ 48 h · assessment ≤ 7 days · fix timeline ≤ 14 days.
 
 ---
 
-## Security Architecture
+## Safe Handling Architecture
 
-TokenForge is designed with a **local-first, zero-egress** security model:
+TokenForge uses a **local-first, zero-egress** security model. No user data ever leaves the machine.
 
-### What TokenForge Does NOT Do
+### Layer 1 — Configuration (no secrets in source)
 
-- ❌ Does not send prompts to any external service
-- ❌ Does not collect usage analytics or telemetry
-- ❌ Does not require API keys or account registration
-- ❌ Does not store optimization history persistently
-- ❌ Does not communicate with TokenForge servers
+All runtime configuration is read exclusively from environment variables via `pydantic-settings`:
 
-### What TokenForge Does
-
-- ✅ All processing happens on your machine
-- ✅ LLM inference via local Ollama (no cloud API)
-- ✅ Embedding model runs locally (MiniLM-L6-v2)
-- ✅ All API calls stay within `localhost`
-- ✅ No external network requests during optimization
-
----
-
-## Sensitive Data Handling
-
-### Prompts
-- Prompts are processed in memory only
-- Never written to disk
-- Never logged (see Logging Policy below)
-- Never transmitted off-device
-
-### Logging Policy
-
-TokenForge explicitly **never logs**:
-- User prompts or any portion thereof
-- API keys or credentials
-- Optimization results
-- Conversation history
-- Request payloads containing user content
-
-Logs contain only: request metadata (method, path, status code, duration, request ID).
-
-See `backend/utils/logger.py` for the logging configuration.
-
-### Environment Variables
-- The `.env` file is in `.gitignore` — never committed
-- `.env.example` contains only placeholder values
-- No secrets are hardcoded in source
-
----
-
-## Network Security
-
-TokenForge binds only to `localhost` by default:
-- Backend: `127.0.0.1:8000`
-- Frontend dev server: `127.0.0.1:3001`
-- Ollama: `127.0.0.1:11434`
-
-**Do not expose these ports to a public network** without adding authentication. The API has no authentication layer in local mode by design — it assumes a trusted local environment.
-
-If you deploy TokenForge as a shared service, add authentication via a reverse proxy (nginx/Caddy with basic auth or OAuth).
-
----
-
-## Dependency Security
-
-Dependencies are pinned in `backend/requirements.txt`. Run `pip audit` periodically:
-
-```bash
-pip install pip-audit
-pip-audit -r backend/requirements.txt
+```
+backend/config.py          ← Settings class, reads from .env / environment
+.env.example               ← Safe placeholder template (committed)
+.env                       ← Actual values (gitignored, never committed)
 ```
 
-For Node dependencies:
+**Rules enforced:**
+- Zero API keys, passwords, or tokens in source code
+- Zero hardcoded credentials in Docker files or CI workflows
+- `.env` blocked by `.gitignore` (pattern: `.env`, `.env.*`)
+- CI workflows use `LLM_ADAPTER=mock` so no real credentials are ever needed
 
+### Layer 2 — Prompt data (memory-only, never persisted)
+
+| Stage | Where data lives | Persisted? |
+|-------|-----------------|------------|
+| HTTP request arrives | Python process memory | No |
+| Token counting | In-process | No |
+| Semantic embedding | In-process NumPy array | No |
+| LLM inference (Ollama) | localhost:11434 — local process | No |
+| HTTP response returned | Python process memory | No |
+
+Prompts are **never** written to disk, logged, or transmitted off-device.
+
+### Layer 3 — Logging policy (sanitized, structured)
+
+The logger in `backend/utils/logger.py` emits only:
+
+```
+request_id | method | path | status_code | duration_ms
+```
+
+Fields that are **explicitly excluded** from all log events:
+- `prompt` / `optimized_prompt` / any prompt fragment
+- `Authorization` / `Cookie` / `X-API-Key` headers
+- IP addresses beyond `127.0.0.1` (localhost only)
+- Model weights or embedding vectors
+
+### Layer 4 — Input sanitization
+
+`backend/utils/sanitizer.py` and `backend/utils/validators.py` enforce:
+- Maximum prompt length (`MAX_PROMPT_LENGTH`, default 100 000 chars)
+- UTF-8 validation before processing
+- Pydantic models on every request body — malformed input rejected at the boundary
+
+### Layer 5 — Network isolation
+
+All services bind to `127.0.0.1` (loopback only) by default:
+
+| Service | Bind address | Port |
+|---------|-------------|------|
+| FastAPI backend | 0.0.0.0 (configurable) | 8000 |
+| Vite dev server | localhost | 3001 |
+| Ollama | localhost | 11434 |
+
+> **Warning:** The API has no authentication in local mode by design (trusted localhost).
+> If you expose port 8000 on a network, add authentication via a reverse proxy (nginx + basic auth, or Caddy + OAuth).
+
+CORS is locked to localhost origins in `config.py`:
+```python
+cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001"]
+```
+
+### Layer 6 — Dependency integrity
+
+Dependencies are **version-pinned** in `backend/requirements.txt` and `frontend/package.json`.
+
+Audit commands:
 ```bash
+# Python
+pip install pip-audit
+pip-audit -r backend/requirements.txt
+
+# Node
 cd frontend && npm audit
 ```
 
+### Layer 7 — Git guardrails
+
+`.gitignore` blocks the following classes of file at the repository level:
+
+| Category | Blocked patterns |
+|----------|-----------------|
+| Env / secrets | `.env`, `.env.*`, `*.secret`, `*_secret*`, `secrets/`, `credentials/` |
+| Keys / certs | `*.pem`, `*.key`, `*.cert`, `*.p12`, `*.pfx` |
+| Logs | `*.log`, `logs/`, `backend_server.log` |
+| ML weights | `*.bin`, `*.safetensors`, `*.gguf`, `*.pt`, `*.pth`, `*.pkl` |
+| Prompt cache | `prompt_cache/`, `optimization_cache/`, `*.embeddings` |
+| DB files | `*.db`, `*.sqlite`, `*.sqlite3` |
+| Build artifacts | `dist/`, `build/`, `node_modules/`, `__pycache__/` |
+| IDE / OS | `.vscode/settings.json`, `.idea/`, `.DS_Store`, `Thumbs.db` |
+
 ---
 
-## Open-Core Boundary
+## What TokenForge Never Does
 
-TokenForge's optimization engine processes user prompts locally. Future premium/enterprise features will maintain the same local-processing guarantee — no user data will flow through hosted services without explicit opt-in consent.
+- ❌ Sends prompts to any external server
+- ❌ Collects analytics, telemetry, or usage data
+- ❌ Requires API keys or account registration
+- ❌ Persists optimization history to disk
+- ❌ Communicates with TokenForge or Anthropic servers
+
+## What TokenForge Does
+
+- ✅ All LLM inference via local Ollama (no cloud API)
+- ✅ Embedding model runs fully on-device (MiniLM-L6-v2)
+- ✅ All API calls stay within localhost
+- ✅ Open-source — you can audit every line
+
+---
+
+## Open-Core Privacy Guarantee
+
+Future premium features will maintain the same local-processing guarantee. No user prompt data will flow through hosted services without explicit, informed, per-user opt-in consent.
 
 ---
 
 ## Responsible Disclosure
 
-We follow responsible disclosure practices. Public disclosure of a reported vulnerability will only happen after:
-1. A fix has been developed and tested
-2. Sufficient time has passed for users to update (typically 30 days)
-3. The reporter has been notified and credited
+Public disclosure only after: fix developed and tested + 30-day patch window + reporter notified and credited.
 
-Thank you for helping keep TokenForge safe for everyone.
+Thank you for helping keep TokenForge safe.
