@@ -304,7 +304,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
 TokenForge is free and open source. If it saves you money on AI costs, consider supporting continued development:
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=flat-square&logo=github)](https://github.com/sponsors/nitiemahendra)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/tokenforge)
+
 
 > Saving money with TokenForge? Support continued development ❤️
 
