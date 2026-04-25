@@ -17,7 +17,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [1.0.0] — 2025-04-25
+## [1.0.1] — 2026-04-25
+
+### Fixed
+- Resolved ruff lint errors across backend (import sorting, unused imports, deprecated type hints)
+- Fixed mypy type errors in `logger.py`, `semantic_engine.py`, and `main.py`
+- Removed broken git submodule reference for `website/` directory
+- CI pipeline now fully green (Backend Tests, Frontend Build, Docker Build)
+
+---
+
+## [1.0.0] — 2026-04-25
 
 ### Added
 - FastAPI backend with 5 REST endpoints (optimize, analyze, models, health, restart)
