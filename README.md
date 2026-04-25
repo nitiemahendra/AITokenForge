@@ -274,6 +274,13 @@ netstat -ano | findstr :8000        # Windows
 **Out of memory** — Switch to `gemma4:1b` and set `OLLAMA_MODEL=gemma4:1b` in `.env`
 
 Full guide → [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+<img width="1920" height="1017" alt="claude_tokenforge_connector" src="https://github.com/user-attachments/assets/2850620b-ff03-4259-ba47-ff476f409141" />
+<img width="1920" height="1017" alt="claude_tokenforge_usage" src="https://github.com/user-attachments/assets/952344b1-4a2a-46ca-935a-1e209c11edb6" />
+<img width="1920" height="1015" alt="claude_tokenforge_mcp_server" src="https://github.com/user-attachments/assets/07d8be99-4955-44df-98dc-62e828550eee" />
+<img width="1918" height="975" alt="TokenForge Localhost dashboard" src="https://github.com/user-attachments/assets/3e1421a2-f391-4546-a1d2-526942e0208c" />
+
+
+
 
 ---
 
@@ -297,7 +304,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
 TokenForge is free and open source. If it saves you money on AI costs, consider supporting continued development:
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=flat-square&logo=github)](https://github.com/sponsors/nitiemahendra)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/tokenforge)
+
 
 > Saving money with TokenForge? Support continued development ❤️
 
