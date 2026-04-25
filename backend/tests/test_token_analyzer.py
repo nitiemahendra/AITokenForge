@@ -1,6 +1,7 @@
 import pytest
-from ..services.token_analyzer import TokenAnalyzer
+
 from ..models.requests import TargetModel
+from ..services.token_analyzer import TokenAnalyzer
 
 
 @pytest.fixture

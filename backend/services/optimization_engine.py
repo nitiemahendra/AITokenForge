@@ -1,17 +1,15 @@
-import re
 import time
 import uuid
-from typing import Optional
 
-from ..models.requests import OptimizeRequest, OptimizationMode, TargetModel
+from ..models.requests import OptimizationMode, OptimizeRequest
 from ..models.responses import OptimizeResponse
 from ..utils.logger import get_logger
-from ..utils.sanitizer import sanitize_prompt, sanitize_for_log
+from ..utils.sanitizer import sanitize_for_log, sanitize_prompt
 from ..utils.validators import validate_compression_ratio
-from .llm_adapters.base import LLMAdapter
-from .token_analyzer import TokenAnalyzer
-from .semantic_engine import SemanticEngine
 from .cost_estimator import CostEstimator
+from .llm_adapters.base import LLMAdapter
+from .semantic_engine import SemanticEngine
+from .token_analyzer import TokenAnalyzer
 
 logger = get_logger(__name__)
 

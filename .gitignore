@@ -134,11 +134,8 @@ ehthumbs.db
 Thumbs.db
 Desktop.ini
 
-# ── Website (deployed separately via Netlify) ────────────────
-website/node_modules/
-website/.next/
-website/out/
-website/.netlify/
+# ── Website (deployed separately via Netlify, has own git repo) ──
+website/
 
 # ── Benchmarks output ────────────────────────────────────────
 benchmarks/results/

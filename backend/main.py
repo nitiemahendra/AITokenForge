@@ -5,18 +5,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .config import get_settings
-from .utils.logger import setup_logging, get_logger
-from .models.config import AppConfig
-from .services.llm_adapters.ollama_adapter import OllamaAdapter
-from .services.llm_adapters.mock_adapter import MockAdapter
-from .services.token_analyzer import TokenAnalyzer
-from .services.semantic_engine import SemanticEngine
-from .services.cost_estimator import CostEstimator
-from .services.optimization_engine import OptimizationEngine
 from .api.middleware.logging import RequestLoggingMiddleware
 from .api.middleware.rate_limit import RateLimitMiddleware
-from .api.routes import optimize_router, analyze_router, health_router, models_router
+from .api.routes import analyze_router, health_router, models_router, optimize_router
+from .config import get_settings
+from .models.config import AppConfig
+from .services.cost_estimator import CostEstimator
+from .services.llm_adapters.mock_adapter import MockAdapter
+from .services.llm_adapters.ollama_adapter import OllamaAdapter
+from .services.optimization_engine import OptimizationEngine
+from .services.semantic_engine import SemanticEngine
+from .services.token_analyzer import TokenAnalyzer
+from .utils.logger import get_logger, setup_logging
 
 logger = get_logger(__name__)
 

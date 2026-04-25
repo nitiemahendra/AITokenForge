@@ -1,4 +1,5 @@
-from typing import Optional, List, Dict, Any
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -13,7 +14,7 @@ class TokenAnalysis(BaseModel):
     estimated_output_tokens: int
     total_estimated_tokens: int
     tokenizer_used: str
-    breakdown: Optional[List[TokenBreakdown]] = None
+    breakdown: list[TokenBreakdown] | None = None
 
 
 class CostEstimate(BaseModel):
@@ -49,8 +50,8 @@ class OptimizeResponse(BaseModel):
     target_model: str
     processing_time_ms: float
     llm_adapter_used: str
-    warnings: List[str] = Field(default_factory=list)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    warnings: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class AnalyzeResponse(BaseModel):
@@ -59,7 +60,7 @@ class AnalyzeResponse(BaseModel):
     token_analysis: TokenAnalysis
     cost_estimate: CostEstimate
     processing_time_ms: float
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class HealthResponse(BaseModel):
@@ -70,7 +71,7 @@ class HealthResponse(BaseModel):
     embedding_model: str
     embedding_available: bool
     uptime_seconds: float
-    models_loaded: List[str]
+    models_loaded: list[str]
 
 
 class ModelInfo(BaseModel):
@@ -84,6 +85,6 @@ class ModelInfo(BaseModel):
 
 
 class ModelsResponse(BaseModel):
-    models: List[ModelInfo]
-    llm_adapters: List[str]
-    optimization_modes: List[str]
+    models: list[ModelInfo]
+    llm_adapters: list[str]
+    optimization_modes: list[str]

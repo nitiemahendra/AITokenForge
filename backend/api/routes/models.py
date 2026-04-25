@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from ...models.responses import ModelsResponse, ModelInfo
 from ...models.requests import OptimizationMode
+from ...models.responses import ModelInfo, ModelsResponse
 from ..dependencies import get_app_state
 
 router = APIRouter(tags=["models"])

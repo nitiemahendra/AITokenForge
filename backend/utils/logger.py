@@ -1,13 +1,13 @@
 import logging
 import sys
-import json
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
+
 import structlog
 
 
-def add_timestamp(logger: Any, method: str, event_dict: Dict) -> Dict:
-    event_dict["timestamp"] = datetime.now(timezone.utc).isoformat()
+def add_timestamp(logger: Any, method: str, event_dict: dict) -> dict:
+    event_dict["timestamp"] = datetime.now(UTC).isoformat()
     return event_dict
 
 

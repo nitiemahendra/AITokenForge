@@ -1,4 +1,5 @@
 import pytest
+
 from ..services.semantic_engine import SemanticEngine
 
 

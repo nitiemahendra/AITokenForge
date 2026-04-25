@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -53,8 +53,8 @@ class OptimizeRequest(BaseModel):
     target_model: TargetModel = Field(default=TargetModel.GPT_4O, description="Target LLM for cost estimation")
     preserve_formatting: bool = Field(default=True, description="Preserve markdown/code block formatting")
     preserve_constraints: bool = Field(default=True, description="Preserve explicit constraints and rules")
-    max_compression_ratio: Optional[float] = Field(default=None, ge=0.1, le=0.99, description="Cap compression ratio")
-    context: Optional[str] = Field(default=None, max_length=10_000, description="Additional context for optimization")
+    max_compression_ratio: float | None = Field(default=None, ge=0.1, le=0.99, description="Cap compression ratio")
+    context: str | None = Field(default=None, max_length=10_000, description="Additional context for optimization")
 
     @field_validator("prompt")
     @classmethod

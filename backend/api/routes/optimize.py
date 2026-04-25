@@ -1,6 +1,6 @@
-import time
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from ...models.requests import OptimizeRequest
 from ...models.responses import OptimizeResponse

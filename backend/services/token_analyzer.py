@@ -1,4 +1,4 @@
-from typing import Optional
+
 import tiktoken
 
 from ..models.requests import TargetModel
@@ -78,7 +78,7 @@ class TokenAnalyzer:
         input_count = self.count_tokens(prompt, target_model)
         output_estimate = self._estimate_output_tokens(input_count, target_model)
 
-        breakdown: Optional[list[TokenBreakdown]] = None
+        breakdown: list[TokenBreakdown] | None = None
         if include_breakdown:
             breakdown = self._build_breakdown(prompt, target_model)
 

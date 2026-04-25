@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -12,7 +12,7 @@ class ModelPricing(BaseModel):
 
 # Pricing in USD per 1K tokens — updated April 2026
 # Prices marked (est.) are approximate based on public announcements
-DEFAULT_PRICING: Dict[str, ModelPricing] = {
+DEFAULT_PRICING: dict[str, ModelPricing] = {
     # ── OpenAI ────────────────────────────────────────────────────────────────
     "gpt-5": ModelPricing(
         input_per_1k_tokens=0.002,
@@ -225,7 +225,7 @@ class AppConfig(BaseModel):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "gemma4:latest"
     ollama_timeout: int = 120
-    gemma_model_path: Optional[str] = None
+    gemma_model_path: str | None = None
 
     # Embedding
     embedding_model: str = "all-MiniLM-L6-v2"
@@ -241,10 +241,10 @@ class AppConfig(BaseModel):
     rate_limit_window: int = 60  # seconds
 
     # Pricing overrides (optional)
-    custom_pricing: Optional[Dict[str, ModelPricing]] = None
+    custom_pricing: dict[str, ModelPricing] | None = None
 
     @property
-    def effective_pricing(self) -> Dict[str, ModelPricing]:
+    def effective_pricing(self) -> dict[str, ModelPricing]:
         pricing = dict(DEFAULT_PRICING)
         if self.custom_pricing:
             pricing.update(self.custom_pricing)

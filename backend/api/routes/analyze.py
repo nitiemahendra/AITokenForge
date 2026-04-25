@@ -1,12 +1,13 @@
-import uuid
 import time
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+import uuid
+
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from ...models.requests import AnalyzeRequest
 from ...models.responses import AnalyzeResponse
 from ...utils.sanitizer import sanitize_prompt
-from ..dependencies import get_token_analyzer, get_cost_estimator
+from ..dependencies import get_cost_estimator, get_token_analyzer
 
 router = APIRouter(prefix="/analyze", tags=["analysis"])
 logger = structlog.get_logger(__name__)

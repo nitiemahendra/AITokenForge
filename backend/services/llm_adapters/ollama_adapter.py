@@ -1,10 +1,9 @@
 import time
-from typing import Optional
 
 import httpx
 
-from .base import LLMAdapter, LLMResponse
 from ...utils.logger import get_logger
+from .base import LLMAdapter, LLMResponse
 
 logger = get_logger(__name__)
 
@@ -38,7 +37,7 @@ class OllamaAdapter(LLMAdapter):
     async def generate(
         self,
         prompt: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
         max_tokens: int = 2048,
         temperature: float = 0.1,
     ) -> LLMResponse:

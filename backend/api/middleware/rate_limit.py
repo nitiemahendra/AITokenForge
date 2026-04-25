@@ -1,6 +1,5 @@
 import time
 from collections import defaultdict, deque
-from typing import Deque
 
 import structlog
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -11,7 +10,7 @@ logger = structlog.get_logger(__name__)
 
 # In-memory sliding window rate limiter.
 # For production deploy, replace with Redis-backed storage.
-_request_log: dict[str, Deque[float]] = defaultdict(deque)
+_request_log: dict[str, deque[float]] = defaultdict(deque)
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):

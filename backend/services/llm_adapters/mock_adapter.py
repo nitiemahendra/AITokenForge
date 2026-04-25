@@ -1,6 +1,4 @@
 import asyncio
-import time
-from typing import Optional
 
 from .base import LLMAdapter, LLMResponse
 
@@ -23,7 +21,7 @@ class MockAdapter(LLMAdapter):
     async def generate(
         self,
         prompt: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
         max_tokens: int = 2048,
         temperature: float = 0.1,
     ) -> LLMResponse:

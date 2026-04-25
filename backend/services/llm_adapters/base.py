@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -11,7 +10,7 @@ class LLMResponse:
     completion_tokens: int
     latency_ms: float
     success: bool
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class LLMAdapter(ABC):
@@ -21,7 +20,7 @@ class LLMAdapter(ABC):
     async def generate(
         self,
         prompt: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
         max_tokens: int = 2048,
         temperature: float = 0.1,
     ) -> LLMResponse:

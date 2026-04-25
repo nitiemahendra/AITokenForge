@@ -1,5 +1,5 @@
+
 import numpy as np
-from typing import Optional
 
 from ..models.responses import SemanticResult
 from ..utils.logger import get_logger
@@ -76,10 +76,7 @@ class SemanticEngine:
         tokens_a = set(text_a.lower().split())
         tokens_b = set(text_b.lower().split())
         union = tokens_a | tokens_b
-        if not union:
-            score = 1.0
-        else:
-            score = len(tokens_a & tokens_b) / len(union)
+        score = 1.0 if not union else len(tokens_a & tokens_b) / len(union)
         score = max(0.0, min(1.0, score))
         return SemanticResult(
             similarity_score=round(score, 4),

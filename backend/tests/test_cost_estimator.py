@@ -1,6 +1,7 @@
 import pytest
-from ..services.cost_estimator import CostEstimator
+
 from ..models.requests import TargetModel
+from ..services.cost_estimator import CostEstimator
 
 
 @pytest.fixture
