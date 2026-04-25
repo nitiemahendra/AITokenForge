@@ -1,0 +1,31 @@
+# MCP server
+mcp[cli]>=1.0.0
+
+# Core framework
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# HTTP client (async, for Ollama)
+httpx==0.28.1
+
+# Token counting
+tiktoken==0.8.0
+
+# Semantic similarity
+sentence-transformers==3.3.1
+numpy==1.26.4
+
+# Structured logging
+structlog==24.4.0
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+anyio==4.7.0
+httpx==0.28.1  # also used for test client
+
+# Development / linting (optional but recommended)
+ruff==0.8.6
+mypy==1.13.0
