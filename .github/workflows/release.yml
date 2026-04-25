@@ -45,14 +45,9 @@ jobs:
 
       - name: Create source archive
         run: |
-          git archive --format=zip --prefix=tokenforge-${{ steps.version.outputs.VERSION }}/ \
-            HEAD backend/ frontend/src frontend/package.json frontend/vite.config.ts \
-            frontend/tsconfig.json frontend/tailwind.config.js frontend/index.html \
-            frontend/postcss.config.js mcp_server/ installer/ launcher/ scripts/ \
-            docker/ docs/ examples/ benchmarks/ configs/ \
-            README.md LICENSE CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md \
-            DISCLAIMER.md CHANGELOG.md .env.example pyproject.toml Makefile \
-            docker-compose.yml \
+          git archive --format=zip \
+            --prefix=tokenforge-${{ steps.version.outputs.VERSION }}/ \
+            HEAD \
             -o tokenforge-${{ steps.version.outputs.VERSION }}.zip
 
       - name: Extract changelog for this version
