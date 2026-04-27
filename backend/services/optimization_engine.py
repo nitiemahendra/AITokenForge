@@ -2,11 +2,12 @@ import time
 import uuid
 
 from ..models.requests import OptimizationMode, OptimizeRequest
-from ..models.responses import OptimizeResponse
+from ..models.responses import GraphCompressionMeta, OptimizeResponse
 from ..utils.logger import get_logger
 from ..utils.sanitizer import sanitize_for_log, sanitize_prompt
 from ..utils.validators import validate_compression_ratio
 from .cost_estimator import CostEstimator
+from .graph_optimizer import GraphContextOptimizer
 from .llm_adapters.base import LLMAdapter
 from .semantic_engine import SemanticEngine
 from .token_analyzer import TokenAnalyzer
@@ -90,11 +91,13 @@ class OptimizationEngine:
         token_analyzer: TokenAnalyzer,
         semantic_engine: SemanticEngine,
         cost_estimator: CostEstimator,
+        graph_optimizer: GraphContextOptimizer | None = None,
     ):
         self._llm = llm_adapter
         self._token_analyzer = token_analyzer
         self._semantic = semantic_engine
         self._cost = cost_estimator
+        self._graph = graph_optimizer or GraphContextOptimizer()
 
     async def optimize(self, request: OptimizeRequest) -> OptimizeResponse:
         request_id = str(uuid.uuid4())
@@ -108,6 +111,28 @@ class OptimizationEngine:
             prompt_preview=sanitize_for_log(request.prompt),
         )
 
+        warnings: list[str] = []
+
+        # --- 0. Graph pre-pass (optional) ---
+        graph_meta: GraphCompressionMeta | None = None
+        active_prompt = request.prompt
+        if request.use_graph_compression:
+            graph_result = self._graph.compress(
+                prompt=request.prompt,
+                context_path=request.context_path,
+            )
+            graph_meta = GraphCompressionMeta(**graph_result.to_dict())
+            if graph_result.tokens_after < graph_result.tokens_before:
+                active_prompt = graph_result.compressed_prompt
+                logger.info(
+                    "graph_prepass_applied",
+                    request_id=request_id,
+                    tokens_before=graph_result.tokens_before,
+                    tokens_after=graph_result.tokens_after,
+                )
+            elif graph_result.skipped_reason:
+                warnings.append(f"Graph pre-pass skipped: {graph_result.skipped_reason}")
+
         # --- 1. Analyze original ---
         original_analysis = self._token_analyzer.analyze(request.prompt, request.target_model)
         original_cost = self._cost.estimate(
@@ -116,8 +141,9 @@ class OptimizationEngine:
             request.target_model,
         )
 
-        # --- 2. LLM compression ---
-        llm_prompt = _build_optimization_prompt(request)
+        # --- 2. LLM compression (operates on graph-compressed prompt if pre-pass ran) ---
+        effective_request = request.model_copy(update={"prompt": active_prompt}) if active_prompt != request.prompt else request
+        llm_prompt = _build_optimization_prompt(effective_request)
         system_prompt = _SYSTEM_PROMPTS[request.mode]
         temperature = _TEMPERATURE_MAP[request.mode]
 
@@ -130,12 +156,10 @@ class OptimizationEngine:
 
         if not llm_response.success or not llm_response.text.strip():
             logger.error("llm_optimization_failed", request_id=request_id, error=llm_response.error)
-            # Return original prompt with a warning
             optimized_prompt = request.prompt
-            warnings = [f"LLM optimization failed: {llm_response.error}. Returning original prompt."]
+            warnings.append(f"LLM optimization failed: {llm_response.error}. Returning original prompt.")
         else:
             optimized_prompt = sanitize_prompt(llm_response.text.strip())
-            warnings = []
 
         # Enforce max compression ratio if specified
         if request.max_compression_ratio is not None:
@@ -208,6 +232,7 @@ class OptimizationEngine:
             processing_time_ms=round(processing_ms, 1),
             llm_adapter_used=self._llm.adapter_name(),
             warnings=warnings,
+            graph_compression=graph_meta,
             metadata={
                 "original_cost_breakdown": original_cost.model_dump(),
                 "optimized_cost_breakdown": optimized_cost.model_dump(),

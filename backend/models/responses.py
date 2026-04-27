@@ -34,6 +34,18 @@ class SemanticResult(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0)
 
 
+class GraphCompressionMeta(BaseModel):
+    available: bool
+    nodes_extracted: int = 0
+    edges_extracted: int = 0
+    communities: int = 0
+    god_nodes: list[str] = Field(default_factory=list)
+    tokens_before: int = 0
+    tokens_after: int = 0
+    graph_summary: str = ""
+    skipped_reason: str = ""
+
+
 class OptimizeResponse(BaseModel):
     request_id: str
     original_prompt: str
@@ -52,6 +64,7 @@ class OptimizeResponse(BaseModel):
     llm_adapter_used: str
     warnings: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+    graph_compression: GraphCompressionMeta | None = None
 
 
 class AnalyzeResponse(BaseModel):

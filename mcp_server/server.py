@@ -114,6 +114,33 @@ async def list_tools() -> list[Tool]:
             },
         ),
         Tool(
+            name="compress_with_graph",
+            description=(
+                "Use Graphify knowledge-graph compression on a prompt that contains code or document context. "
+                "Extracts entities and relationships from a codebase path, replaces verbose inline code blocks "
+                "with a compact graph summary, then runs LLM compression on the result. "
+                "Best for prompts that paste raw files — typically achieves 60-90% context reduction. "
+                "Requires: pip install aitokenforge[graph]"
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "The prompt containing code/doc context to compress"},
+                    "context_path": {
+                        "type": "string",
+                        "description": "Absolute path to the file or directory to analyse with Graphify",
+                    },
+                    "mode": {
+                        "type": "string",
+                        "enum": ["safe", "balanced", "aggressive"],
+                        "default": "balanced",
+                    },
+                    "target_model": {"type": "string", "default": "gpt-4o"},
+                },
+                "required": ["prompt"],
+            },
+        ),
+        Tool(
             name="get_pricing",
             description="Look up API pricing for any supported LLM model.",
             inputSchema={
@@ -138,6 +165,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return await _tool_analyze(arguments)
     elif name == "compare_models":
         return await _tool_compare(arguments)
+    elif name == "compress_with_graph":
+        return await _tool_graph_compress(arguments)
     elif name == "get_pricing":
         return await _tool_pricing(arguments)
     return [TextContent(type="text", text=f"Unknown tool: {name}")]
@@ -295,6 +324,67 @@ async def _tool_compare(args: dict) -> list[TextContent]:
         output += f"| {i} | {r['model']} | ${r['cost']:.6f} | {ratio} | ${r['input_per_1k']} | ${r['output_per_1k']} |\n"
 
     output += f"\n> Combine with `optimize_prompt` for maximum savings.\n"
+    return [TextContent(type="text", text=output)]
+
+
+async def _tool_graph_compress(args: dict) -> list[TextContent]:
+    prompt = args.get("prompt", "").strip()
+    if not prompt:
+        return [TextContent(type="text", text="Error: prompt is required.")]
+    try:
+        data = await _post("/api/v1/optimize", {
+            "prompt": prompt,
+            "mode": args.get("mode", "balanced"),
+            "target_model": args.get("target_model", "gpt-4o"),
+            "preserve_formatting": True,
+            "preserve_constraints": True,
+            "use_graph_compression": True,
+            "context_path": args.get("context_path"),
+        })
+    except httpx.ConnectError:
+        return [TextContent(type="text", text=f"Cannot reach TokenForge backend at {BACKEND_URL}.")]
+    except Exception as exc:
+        return [TextContent(type="text", text=f"Graph compression failed: {exc}")]
+
+    savings = data["estimated_cost_before"] - data["estimated_cost_after"]
+    gc = data.get("graph_compression") or {}
+
+    output = f"""## TokenForge — Graph + LLM Compression
+
+**Mode:** {data["optimization_mode"]}  |  **Model:** {data["target_model"]}
+
+### Optimized Prompt
+```
+{data["optimized_prompt"]}
+```
+
+### Two-Pass Compression Results
+| Pass | Tokens before | Tokens after | Reduction |
+|------|--------------|-------------|-----------|
+| Graph pre-pass | {gc.get("tokens_before", "—")} | {gc.get("tokens_after", "—")} | {f'{round((1 - gc["tokens_after"]/max(gc["tokens_before"],1))*100, 1)}%' if gc.get("tokens_before") else "—"} |
+| LLM pass | {data["original_tokens"]} | {data["optimized_tokens"]} | {data["token_reduction_percent"]:.1f}% |
+
+### Graph Analysis
+| Metric | Value |
+|--------|-------|
+| Nodes extracted | {gc.get("nodes_extracted", "—")} |
+| Edges extracted | {gc.get("edges_extracted", "—")} |
+| Communities | {gc.get("communities", "—")} |
+| Key entities | {", ".join(gc.get("god_nodes", [])) or "—"} |
+
+### Cost
+| | Cost (USD) |
+|-|-----------|
+| Before | ${data["estimated_cost_before"]:.6f} |
+| After | ${data["estimated_cost_after"]:.6f} |
+| **Savings** | **${savings:.6f} ({data["cost_savings_percent"]:.1f}%)** |
+"""
+    if gc.get("graph_summary"):
+        output += f"\n### Graph Summary\n```\n{gc['graph_summary']}\n```\n"
+    if gc.get("skipped_reason"):
+        output += f"\n> Graph pre-pass skipped: {gc['skipped_reason']}\n"
+    if data.get("warnings"):
+        output += "\n### Warnings\n" + "".join(f"- {w}\n" for w in data["warnings"])
     return [TextContent(type="text", text=output)]
 
 

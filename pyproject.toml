@@ -46,6 +46,11 @@ ml = [
     "sentence-transformers==3.3.1",
     "numpy==1.26.4",
 ]
+# Graphify knowledge-graph context compression
+graph = [
+    "graphify @ git+https://github.com/safishamsi/graphify",
+    "networkx>=3.0",
+]
 # Developer / CI tools
 dev = [
     "sentence-transformers==3.3.1",

@@ -55,6 +55,8 @@ class OptimizeRequest(BaseModel):
     preserve_constraints: bool = Field(default=True, description="Preserve explicit constraints and rules")
     max_compression_ratio: float | None = Field(default=None, ge=0.1, le=0.99, description="Cap compression ratio")
     context: str | None = Field(default=None, max_length=10_000, description="Additional context for optimization")
+    use_graph_compression: bool = Field(default=False, description="Run Graphify graph pre-pass before LLM compression")
+    context_path: str | None = Field(default=None, max_length=4_096, description="File/directory path for graph context analysis")
 
     @field_validator("prompt")
     @classmethod
