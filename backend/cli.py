@@ -14,7 +14,7 @@ def serve() -> None:
     try:
         import uvicorn
     except ImportError:
-        print("uvicorn is not installed. Run: pip install aitokenforge", file=sys.stderr)
+        sys.stderr.write("uvicorn is not installed. Run: pip install aitokenforge\n")
         sys.exit(1)
 
     parser = argparse.ArgumentParser(
@@ -27,7 +27,7 @@ def serve() -> None:
     parser.add_argument("--log-level", default="info", help="Log level (default: info)")
     args = parser.parse_args()
 
-    print(f"\n  TokenForge v1.0.1  —  http://localhost:{args.port}/docs\n")
+    sys.stderr.write(f"\n  TokenForge v1.0.1  —  http://localhost:{args.port}/docs\n\n")
     uvicorn.run(
         "backend.main:app",
         host=args.host,

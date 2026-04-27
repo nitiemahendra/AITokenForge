@@ -14,7 +14,6 @@ passes are complementary:
 from __future__ import annotations
 
 import re
-import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -297,8 +296,6 @@ def _build_graph_summary(
     Produce a compact, token-efficient graph summary suitable for injection
     into an LLM prompt.
     """
-    import networkx as nx  # graphify depends on networkx, so it's always present
-
     source_label = f" of `{path.name}`" if path else ""
     lines: list[str] = [f"[GRAPH CONTEXT{source_label}]"]
 
