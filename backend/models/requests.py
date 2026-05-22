@@ -11,6 +11,8 @@ class OptimizationMode(str, Enum):
 
 class TargetModel(str, Enum):
     # OpenAI
+    GPT_55 = "gpt-5.5"
+    GPT_54 = "gpt-5.4"
     GPT_5 = "gpt-5"
     GPT_41 = "gpt-4.1"
     GPT_41_MINI = "gpt-4.1-mini"
@@ -21,19 +23,27 @@ class TargetModel(str, Enum):
     GPT_4O_MINI = "gpt-4o-mini"
     # Anthropic
     CLAUDE_OPUS_47 = "claude-opus-4-7"
-    CLAUDE_OPUS_4 = "claude-opus-4-5"
+    CLAUDE_OPUS_45 = "claude-opus-4-5"
     CLAUDE_SONNET_45 = "claude-sonnet-4-5"
     CLAUDE_SONNET_46 = "claude-sonnet-4-6"
     CLAUDE_HAIKU_45 = "claude-haiku-4-5"
     # Google
+    GEMINI_35_FLASH = "gemini-3.5-flash"
+    GEMINI_31_PRO = "gemini-3.1-pro"
+    GEMINI_31_FLASH_LITE = "gemini-3.1-flash-lite"
     GEMINI_3_PRO = "gemini-3-pro"
+    GEMINI_3_FLASH = "gemini-3-flash"
     GEMINI_25_PRO = "gemini-2.5-pro"
     GEMINI_25_FLASH = "gemini-2.5-flash"
     GEMINI_20_FLASH = "gemini-2.0-flash"
     # xAI
+    GROK_43 = "grok-4.3"
+    GROK_420 = "grok-4.20"
     GROK_3 = "grok-3"
     GROK_3_MINI = "grok-3-mini"
     # DeepSeek
+    DEEPSEEK_V4 = "deepseek-v4"
+    DEEPSEEK_V4_FLASH = "deepseek-v4-flash"
     DEEPSEEK_V3 = "deepseek-v3"
     DEEPSEEK_R1 = "deepseek-r1"
     # Meta

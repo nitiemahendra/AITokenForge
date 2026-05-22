@@ -10,10 +10,24 @@ class ModelPricing(BaseModel):
     display_name: str = ""
 
 
-# Pricing in USD per 1K tokens — updated April 2026
+# Pricing in USD per 1K tokens — updated May 2026
 # Prices marked (est.) are approximate based on public announcements
 DEFAULT_PRICING: dict[str, ModelPricing] = {
     # ── OpenAI ────────────────────────────────────────────────────────────────
+    "gpt-5.5": ModelPricing(
+        input_per_1k_tokens=0.005,
+        output_per_1k_tokens=0.030,
+        context_window=1_000_000,
+        provider="openai",
+        display_name="GPT-5.5",
+    ),
+    "gpt-5.4": ModelPricing(
+        input_per_1k_tokens=0.0025,
+        output_per_1k_tokens=0.015,
+        context_window=1_000_000,
+        provider="openai",
+        display_name="GPT-5.4",
+    ),
     "gpt-5": ModelPricing(
         input_per_1k_tokens=0.002,
         output_per_1k_tokens=0.0125,
@@ -72,8 +86,8 @@ DEFAULT_PRICING: dict[str, ModelPricing] = {
     ),
     # ── Anthropic ─────────────────────────────────────────────────────────────
     "claude-opus-4-7": ModelPricing(
-        input_per_1k_tokens=0.010,
-        output_per_1k_tokens=0.050,
+        input_per_1k_tokens=0.005,
+        output_per_1k_tokens=0.025,
         context_window=200_000,
         provider="anthropic",
         display_name="Claude Opus 4.7",
@@ -83,7 +97,7 @@ DEFAULT_PRICING: dict[str, ModelPricing] = {
         output_per_1k_tokens=0.075,
         context_window=200_000,
         provider="anthropic",
-        display_name="Claude Opus 4",
+        display_name="Claude Opus 4.5 (legacy)",
     ),
     "claude-sonnet-4-5": ModelPricing(
         input_per_1k_tokens=0.003,
@@ -100,19 +114,47 @@ DEFAULT_PRICING: dict[str, ModelPricing] = {
         display_name="Claude Sonnet 4.6",
     ),
     "claude-haiku-4-5": ModelPricing(
-        input_per_1k_tokens=0.0008,
-        output_per_1k_tokens=0.004,
+        input_per_1k_tokens=0.001,
+        output_per_1k_tokens=0.005,
         context_window=200_000,
         provider="anthropic",
         display_name="Claude Haiku 4.5",
     ),
     # ── Google DeepMind ───────────────────────────────────────────────────────
+    "gemini-3.5-flash": ModelPricing(
+        input_per_1k_tokens=0.0015,
+        output_per_1k_tokens=0.009,
+        context_window=1_048_576,
+        provider="google",
+        display_name="Gemini 3.5 Flash",
+    ),
+    "gemini-3.1-pro": ModelPricing(
+        input_per_1k_tokens=0.002,
+        output_per_1k_tokens=0.012,
+        context_window=1_048_576,
+        provider="google",
+        display_name="Gemini 3.1 Pro",
+    ),
+    "gemini-3.1-flash-lite": ModelPricing(
+        input_per_1k_tokens=0.00025,
+        output_per_1k_tokens=0.0015,
+        context_window=1_048_576,
+        provider="google",
+        display_name="Gemini 3.1 Flash Lite",
+    ),
     "gemini-3-pro": ModelPricing(
         input_per_1k_tokens=0.002,
         output_per_1k_tokens=0.015,
         context_window=2_000_000,
         provider="google",
-        display_name="Gemini 3 Pro (est.)",
+        display_name="Gemini 3 Pro",
+    ),
+    "gemini-3-flash": ModelPricing(
+        input_per_1k_tokens=0.0005,
+        output_per_1k_tokens=0.003,
+        context_window=1_048_576,
+        provider="google",
+        display_name="Gemini 3 Flash",
     ),
     "gemini-2.5-pro": ModelPricing(
         input_per_1k_tokens=0.00125,
@@ -136,6 +178,20 @@ DEFAULT_PRICING: dict[str, ModelPricing] = {
         display_name="Gemini 2.0 Flash",
     ),
     # ── xAI ───────────────────────────────────────────────────────────────────
+    "grok-4.3": ModelPricing(
+        input_per_1k_tokens=0.00125,
+        output_per_1k_tokens=0.0025,
+        context_window=1_000_000,
+        provider="xai",
+        display_name="Grok 4.3",
+    ),
+    "grok-4.20": ModelPricing(
+        input_per_1k_tokens=0.002,
+        output_per_1k_tokens=0.006,
+        context_window=1_000_000,
+        provider="xai",
+        display_name="Grok 4.20",
+    ),
     "grok-3": ModelPricing(
         input_per_1k_tokens=0.003,
         output_per_1k_tokens=0.015,
@@ -151,6 +207,20 @@ DEFAULT_PRICING: dict[str, ModelPricing] = {
         display_name="Grok 3 Mini",
     ),
     # ── DeepSeek ──────────────────────────────────────────────────────────────
+    "deepseek-v4": ModelPricing(
+        input_per_1k_tokens=0.00174,
+        output_per_1k_tokens=0.00348,
+        context_window=1_000_000,
+        provider="deepseek",
+        display_name="DeepSeek V4",
+    ),
+    "deepseek-v4-flash": ModelPricing(
+        input_per_1k_tokens=0.00014,
+        output_per_1k_tokens=0.00028,
+        context_window=1_000_000,
+        provider="deepseek",
+        display_name="DeepSeek V4 Flash",
+    ),
     "deepseek-v3": ModelPricing(
         input_per_1k_tokens=0.00027,
         output_per_1k_tokens=0.0011,

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     # App
     app_name: str = "TokenForge"
-    version: str = "1.0.0"
+    version: str = "1.1.0"
     debug: bool = False
     log_level: str = "INFO"
     json_logs: bool = False

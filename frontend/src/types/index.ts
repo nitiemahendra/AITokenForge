@@ -2,6 +2,8 @@ export type OptimizationMode = 'safe' | 'balanced' | 'aggressive';
 
 export type TargetModel =
   // OpenAI
+  | 'gpt-5.5'
+  | 'gpt-5.4'
   | 'gpt-5'
   | 'gpt-4.1'
   | 'gpt-4.1-mini'
@@ -17,14 +19,22 @@ export type TargetModel =
   | 'claude-sonnet-4-6'
   | 'claude-haiku-4-5'
   // Google
+  | 'gemini-3.5-flash'
+  | 'gemini-3.1-pro'
+  | 'gemini-3.1-flash-lite'
   | 'gemini-3-pro'
+  | 'gemini-3-flash'
   | 'gemini-2.5-pro'
   | 'gemini-2.5-flash'
   | 'gemini-2.0-flash'
   // xAI
+  | 'grok-4.3'
+  | 'grok-4.20'
   | 'grok-3'
   | 'grok-3-mini'
   // DeepSeek
+  | 'deepseek-v4'
+  | 'deepseek-v4-flash'
   | 'deepseek-v3'
   | 'deepseek-r1'
   // Meta
