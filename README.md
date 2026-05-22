@@ -8,7 +8,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
 [![Tests](https://github.com/nitiemahendra/tokenforge/actions/workflows/ci.yml/badge.svg)](https://github.com/nitiemahendra/tokenforge/actions)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Claude%20Desktop-purple.svg)](docs/MCP_INTEGRATION.md)
-[![Models](https://img.shields.io/badge/Models-28+-orange.svg)](#supported-models)
+[![Models](https://img.shields.io/badge/Models-37+-orange.svg)](#supported-models)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 <br/>
@@ -49,7 +49,7 @@ Every AI application carries a hidden tax: **bloated prompts**. System prompts, 
 | Naive Shortener | TokenForge Infrastructure |
 |---|---|
 | Cuts characters blindly | Semantic-aware compression, scored |
-| No cost visibility | Live cost estimates for 28 models |
+| No cost visibility | Live cost estimates for 37 models |
 | No integration layer | MCP-native for Claude Desktop |
 | Cloud-based | 100% local, zero data egress |
 | No quality guarantee | Similarity verified on every run |
@@ -61,7 +61,7 @@ Every AI application carries a hidden tax: **bloated prompts**. System prompts, 
 - **70% token reduction** with configurable modes (Safe / Balanced / Aggressive)
 - **Local-first** — all processing on your machine via Ollama + gemma
 - **Semantic scoring** — cosine similarity measured on every optimization
-- **28 models** — live cost estimates for GPT-5, Claude Opus, Gemini, Grok, DeepSeek, Llama, Qwen
+- **37 models** — live cost estimates for GPT-5.5, Claude Opus, Gemini 3.5, Grok 4, DeepSeek V4, Llama 4, Qwen3
 - **Claude Desktop MCP** — 4 native tools: optimize, analyze, compare, pricing
 - **React dashboard** — real-time token counter, visual diff, cost analytics
 - **REST API** — drop into any LLM pipeline as a pre-processing layer
@@ -79,7 +79,7 @@ Your Machine
 └── FastAPI Backend  :8000
     ├── Token Analyzer    (tiktoken)
     ├── Semantic Engine   (MiniLM-L6-v2)
-    ├── Cost Estimator    (28 models)
+    ├── Cost Estimator    (37 models)
     └── Optimization Engine
             └── Ollama  :11434
                     └── gemma4:1b / 4b / latest
@@ -215,13 +215,15 @@ Full reference → [docs/api.md](docs/api.md)
 
 ## Supported Models
 
+37 models across 8 providers — pricing updated May 2026.
+
 | Provider | Models |
 |---|---|
-| OpenAI | GPT-5, GPT-4.1, GPT-4.1-mini, GPT-4.1-nano, o3, o4-mini, GPT-4o, GPT-4o-mini |
+| OpenAI | GPT-5.5, GPT-5.4, GPT-5, GPT-4.1, GPT-4.1-mini, GPT-4.1-nano, o3, o4-mini, GPT-4o, GPT-4o-mini |
 | Anthropic | Claude Opus 4.7, Claude Opus 4.5, Claude Sonnet 4.6, Claude Sonnet 4.5, Claude Haiku 4.5 |
-| Google | Gemini 3 Pro, Gemini 2.5 Pro, Gemini 2.5 Flash, Gemini 2.0 Flash |
-| xAI | Grok 3, Grok 3 Mini |
-| DeepSeek | DeepSeek V3, DeepSeek R1 |
+| Google | Gemini 3.5 Flash, Gemini 3.1 Pro, Gemini 3.1 Flash Lite, Gemini 3 Pro, Gemini 3 Flash, Gemini 2.5 Pro, Gemini 2.5 Flash, Gemini 2.0 Flash |
+| xAI | Grok 4.3, Grok 4.20, Grok 3, Grok 3 Mini |
+| DeepSeek | DeepSeek V4, DeepSeek V4 Flash, DeepSeek V3, DeepSeek R1 |
 | Meta | Llama 4 Maverick, Llama 4 Scout |
 | Alibaba | Qwen3 235B, Qwen3 30B |
 | Moonshot | Kimi K2 |
